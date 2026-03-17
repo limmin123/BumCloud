@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  uid       String   @id
+  email     String   @unique
+  role      String   @default("user")
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  files File[]
+}
+
+model File {
+  id           String   @id @default(cuid())
+  uploaderUid  String
+  originalName String
+  savedName    String
+  filePath     String
+  fileSize     BigInt
+  comment      String?  @db.Text
+  createdAt    DateTime @default(now())
+
+  uploader User @relation(fields: [uploaderUid], references: [uid], onDelete: Cascade)
+}
